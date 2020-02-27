@@ -1,36 +1,63 @@
 //declaration
 var express = require('express');
-var login = require('./controllers/login');
-var home = require('./controllers/home');
-var logout = require('./controllers/logout');
-var ejs = require('ejs');
-var exSession = require('express-session');
-var cookieParser = require('cookie-parser');
+var expressSession = require('express-session');
 var bodyParser = require('body-parser');
-//var expressValidator = require('express-validator');
 var app = express();
+var port = 3000;
 
-//configuration
+//common controllers
+var signup = require('./controllers/signup');
+var login = require('./controllers/login');
+var logout = require('./controllers/logout');
+
+//admin controllers
+var admin = require('./controllers/admin');
+
+
+//customer controllers
+var customer = require('./controllers/customer');
+
+//configure
 app.set('view engine', 'ejs');
 
-//middleware 
-app.use(bodyParser.urlencoded({extended:true}));
-app.use(exSession({secret: 'my top secret value', saveUninitialized: true, resave: false}));
-app.use(cookieParser());
-//app.use(expressValidator());
+//middlewares
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(expressSession({secret: 'my top secret pass', resave: false, saveUninitialized: true}));
+app.use('/css', express.static(__dirname + '/css'));
+app.use('/images', express.static(__dirname + '/images'));
 
+app.use('*', function(req, res, next){
 
-
-app.use('/login', login);
-app.use('/home', home);
-app.use('/logout', logout);
-
-//routes
-app.get('/', function(req, res){
-	res.send('Welcome');
+	if(req.originalUrl == '/login' || req.originalUrl == '/signup')
+	{
+		next();
+	}
+	else
+	{
+		if(!req.session.admin && !req.session.customer)
+		{
+			res.redirect('/login');
+			return;
+		}
+		next();
+	}
 });
 
-//server startup
-app.listen(3000, function(){
-	console.log('node server started at 3000!');
+
+//routes
+app.use('/login', login);
+app.use('/signup', signup);
+app.use('/logout', logout);
+
+//admin routes
+app.use('/admin', admin);
+
+
+//customer routes
+
+app.use('/customer', customer);
+
+//server start
+app.listen(port, ()=>{
+    console.log(`Server running on port ${port}`);
 });
