@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>User List</title>
+</head>
+<body>
+	<div>
+			<center><h1>All Employee List</h1></center> 		
+	</div>
+
+	<a href="/home">Back</a>|
+	<a href="/logout">Logout</a> |
+	<form method="POST">
+        Search : <input type="text" name="search">
+        <input type="submit" value="Search" name="id">
+    </form>
+
+	
+	<center>
+	<table border="1">
+		<tr>
+			<td>ID</td>
+			<td>Emp Name</td>
+			<td>CompanyName</td>
+			<td>Contact</td>
+
+			<td>USERNAME</td>
+			<td>PASSWORD</td>
+			<td>TYPE</td>
+			<td>ACTION</td>
+		</tr>
+	<% for(var i=0; i < userlist.length; i++){ %>
+		<tr>
+			<td><%= userlist[i].id %></td>
+			<td><%= userlist[i].name %></td>
+			<td><%= userlist[i].companyName %></td>
+			<td><%= userlist[i].contact %></td>
+			<td><%= userlist[i].username %></td>
+			<td><%= userlist[i].password %></td>
+			<td><%= userlist[i].type %></td>
+			<td>
+				<a href="/home/edit/<%= userlist[i].id %>">EDIT</a> | 
+				<a href="/home/delete/<%= userlist[i].id %>">DELETE</a> 
+			</td>
+		</tr>
+	<%  } %>
+	</table>
+	</center>
+
+</body>
+</html>
